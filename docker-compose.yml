@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    container_name: deskmate-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: deskmate
+      POSTGRES_PASSWORD: deskmate
+      POSTGRES_DB: deskmate
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U deskmate -d deskmate"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres-data:

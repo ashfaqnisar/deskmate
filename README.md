@@ -10,9 +10,8 @@ An internal HR/IT helpdesk AI agent for the fictional **Acme Corp**, built by ha
 
 **Stack:** TypeScript · Bun · DeepSeek API · Postgres + pgvector · Ollama embeddings · MCP TS SDK
 
-📘 Start here: [`docs/LEARNING_PLAN.md`](docs/LEARNING_PLAN.md)
-
 ## Layout (so far)
+
 - `docs/`: learning plan and notes
 - `data/company/`: fake company knowledge base for RAG
 - `data/evals/`: eval datasets (you write these)
