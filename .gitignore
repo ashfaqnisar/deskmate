@@ -4,3 +4,5 @@ node_modules/
 evals/results/
 *.log
 .DS_Store
+docs/LEARNING_PLAN.md
+docs/techstack.md
