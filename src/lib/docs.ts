@@ -2,6 +2,7 @@ import swagger from "@fastify/swagger";
 import scalar from "@scalar/fastify-api-reference";
 import fp from "fastify-plugin";
 import { jsonSchemaTransform } from "fastify-type-provider-zod";
+
 import { env } from "~/config/env";
 
 export const docs = fp(

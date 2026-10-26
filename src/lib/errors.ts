@@ -1,8 +1,9 @@
-import type { FastifyError, FastifyReply, FastifyRequest } from "fastify";
 import {
   hasZodFastifySchemaValidationErrors,
   isResponseSerializationError,
 } from "fastify-type-provider-zod";
+
+import type { FastifyError, FastifyReply, FastifyRequest } from "fastify";
 
 export class HttpError extends Error {
   constructor(

@@ -1,4 +1,5 @@
-import { SQL } from "bun";
+import { drizzle } from "drizzle-orm/bun-sql";
+
 import { env } from "~/config/env";
 
-export const sql = new SQL(env.DATABASE_URL, { connectionTimeout: 5 });
+export const db = drizzle({ connection: { url: env.DATABASE_URL, connectionTimeout: 5 } });

@@ -1,6 +1,8 @@
 import { AsyncLocalStorage } from "node:async_hooks";
-import type { IncomingMessage } from "node:http";
+
 import pino from "pino";
+
+import type { IncomingMessage } from "node:http";
 
 type RequestContext = { reqId: string; req: ReturnType<typeof serializeRawReq> };
 

@@ -1,11 +1,14 @@
+import { randomUUIDv7 } from "bun";
+
 import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import rateLimit from "@fastify/rate-limit";
+import { sql } from "drizzle-orm";
 import fastify from "fastify";
-import { randomUUIDv7 } from "bun";
 import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
+
 import { env } from "~/config/env";
-import { sql } from "~/db";
+import { db } from "~/db";
 import { docs } from "~/lib/docs";
 import { errorHandler, notFoundHandler } from "~/lib/errors";
 import { logger, requestContext, serializeRawReq } from "~/lib/logger";
@@ -28,11 +31,11 @@ export function buildApp() {
   });
 
   app.addHook("onReady", async () => {
-    await sql`SELECT 1`;
+    await db.execute(sql`SELECT 1`);
     logger.info("Connected to Postgres");
   });
   app.addHook("onClose", async () => {
-    await sql.close();
+    await db.$client.close();
   });
 
   app.register(helmet);
