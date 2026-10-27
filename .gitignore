@@ -7,3 +7,7 @@ node_modules/
 docs/LEARNING_PLAN.md
 docs/techstack.md
 dist
+
+# Local-only
+backend/deskmate-api/scripts/generate-company-docs.ts
+.superdesign/
