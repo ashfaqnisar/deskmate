@@ -45,6 +45,7 @@ export type RunResult = {
   startedAt: string;
   model: string;
   promptVersion: string;
+  intentBackend: string;
   passRate: number;
   tokens: number;
   avgLatencyMs: number;
