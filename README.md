@@ -14,8 +14,8 @@ An internal HR/IT helpdesk AI agent for the fictional **Acme Corp**, built by ha
 
 Bun workspaces monorepo.
 
-- `apps/api/`: Fastify API (chat, docs, database, migrations)
-- `apps/web/`: React UI (not created yet)
+- `backend/deskmate-api/`: Fastify API (chat, docs, database, migrations)
+- `frontend/deskmate-web/`: React chat UI (Vite)
 - `packages/shared/`: zod schemas and types shared by the API and the UI
 - `data/company/`: fake company knowledge base for RAG
 - `data/evals/`: eval datasets (you write these)
@@ -26,7 +26,7 @@ Bun workspaces monorepo.
 ```sh
 bun install
 docker compose up -d                 # Postgres + pgvector
-cp apps/api/.env.example apps/api/.env   # then fill in LLM_API_KEY
+cp backend/deskmate-api/.env.example backend/deskmate-api/.env   # then fill in LLM_API_KEY
 bun run db:migrate
 bun run dev                          # API on http://localhost:3000, docs at /docs
 ```

@@ -5,7 +5,7 @@
     "**/node_modules/**",
     "data",
     "docs",
-    "apps/api/src/db/migrations"
+    "backend/deskmate-api/src/db/migrations"
   ],
   "printWidth": 100,
   "sortImports": {

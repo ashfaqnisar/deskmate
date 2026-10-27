@@ -38,6 +38,8 @@ test("hello world", () => {
 
 ## Frontend
 
+**Exception for this repo:** `frontend/deskmate-web` is a Vite + React app by choice (Tailwind via `@tailwindcss/vite`, TanStack Router and Query). Use `vite` there; the Bun HTML-import guidance below applies only to other frontends.
+
 Use HTML imports with `Bun.serve()`. Don't use `vite`. HTML imports fully support React, CSS, Tailwind.
 
 Server:

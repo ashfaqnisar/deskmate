@@ -6,7 +6,9 @@
     ".": "./src/index.ts"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint --type-aware --type-check && oxfmt --check",
+    "lint:fix": "oxlint --fix && oxfmt"
   },
   "dependencies": {
     "zod": "catalog:"

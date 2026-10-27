@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "db:generate": "bunx --bun drizzle-kit generate",
     "db:migrate": "bun src/db/migrate.ts",
-    "db:studio": "bunx --bun drizzle-kit studio"
+    "db:studio": "bunx --bun drizzle-kit studio",
+    "lint": "oxlint --type-aware --type-check && oxfmt --check",
+    "lint:fix": "oxlint --fix && oxfmt"
   },
   "dependencies": {
     "@deskmate/shared": "workspace:*",

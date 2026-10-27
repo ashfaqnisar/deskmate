@@ -1,0 +1,67 @@
+{
+  "$schema": "../../node_modules/oxfmt/configuration_schema.json",
+  "extends": ["../../.oxfmtrc.json"],
+  "ignorePatterns": ["**/dist/**", "**/node_modules/**"],
+  "sortImports": {
+    "internalPattern": ["~/"],
+    "customGroups": [
+      {
+        "groupName": "bun",
+        "elementNamePattern": ["bun", "bun:*"],
+        "modifiers": ["value"]
+      },
+      {
+        "groupName": "react",
+        "elementNamePattern": ["react", "react/**", "react-dom", "react-dom/**"],
+        "modifiers": ["value"]
+      },
+      {
+        "groupName": "deskmate",
+        "elementNamePattern": ["@deskmate/**"],
+        "modifiers": ["value"]
+      },
+      {
+        "groupName": "tilde-lib",
+        "elementNamePattern": ["~/lib", "~/lib/**"],
+        "modifiers": ["value"]
+      },
+      {
+        "groupName": "tilde-hooks",
+        "elementNamePattern": ["~/hooks", "~/hooks/**"],
+        "modifiers": ["value"]
+      },
+      {
+        "groupName": "tilde-components",
+        "elementNamePattern": ["~/components", "~/components/**"],
+        "modifiers": ["value"]
+      }
+    ],
+    "groups": [
+      "value-builtin",
+      "bun",
+      "react",
+      "value-external",
+      "deskmate",
+      ["tilde-lib", "tilde-hooks"],
+      "tilde-components",
+      "value-internal",
+      ["value-parent", "value-sibling", "value-index"],
+      [
+        "type-builtin",
+        "type-external",
+        "type-import",
+        "type-internal",
+        "type-subpath",
+        "type-parent",
+        "type-sibling",
+        "type-index"
+      ],
+      "unknown"
+    ]
+  },
+  "sortTailwindcss": {
+    "stylesheet": "./src/styles.css",
+    "functions": ["clsx"],
+    "preserveWhitespace": true
+  }
+}

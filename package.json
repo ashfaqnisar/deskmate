@@ -3,7 +3,8 @@
   "private": true,
   "workspaces": {
     "packages": [
-      "apps/*",
+      "backend/*",
+      "frontend/*",
       "packages/*"
     ],
     "catalog": {
@@ -14,10 +15,12 @@
   },
   "type": "module",
   "scripts": {
-    "dev": "bun run --filter @deskmate/api dev",
+    "dev": "bun run --filter '@deskmate/*' dev",
+    "dev:api": "bun run --filter @deskmate/api dev",
+    "dev:web": "bun run --filter @deskmate/web dev",
     "typecheck": "bun run --filter '*' typecheck",
-    "lint": "oxlint --type-aware --type-check && oxfmt --check",
-    "lint:fix": "oxlint --fix && oxfmt",
+    "lint": "bun run --filter '*' lint",
+    "lint:fix": "bun run --filter '*' lint:fix",
     "db:generate": "bun run --filter @deskmate/api db:generate",
     "db:migrate": "bun run --filter @deskmate/api db:migrate",
     "db:studio": "bun run --filter @deskmate/api db:studio"
