@@ -3,10 +3,15 @@ import OpenAI from "openai";
 import { HttpError } from "~/lib/errors";
 import { logger } from "~/lib/logger";
 import * as llm from "~/llm/provider";
+import { systemPrompt } from "~/prompts";
 
 import type { ChatBody } from "@deskmate/shared";
 
 const toMessages = (body: ChatBody): llm.ChatMessage[] => [
+  {
+    role: "system",
+    content: systemPrompt.render({ today: new Date().toISOString().slice(0, 10) }),
+  },
   ...body.history,
   { role: "user", content: body.message },
 ];
