@@ -27,14 +27,18 @@ export const ChatResponse = z.object({
 });
 export type ChatResponse = z.infer<typeof ChatResponse>;
 
+const StreamEventSchema = z.discriminatedUnion("type", [
+  z.object({ type: z.literal("delta"), text: z.string() }),
+  ChatResponse.omit({ reply: true }).extend({ type: z.literal("done") }),
+]);
+
 const streamExample =
   'data: {"type":"delta","text":"Hello"}\n\n' +
   'data: {"type":"delta","text":" there!"}\n\n' +
   'data: {"type":"done","model":"deepseek-chat","usage":{"promptTokens":12,"completionTokens":4,"totalTokens":16},"latencyMs":812}\n\n';
 
-// Documents the raw event text in OpenAPI; at runtime the route sends a Readable stream of it.
-export const StreamResponse = z.string().meta({
-  description:
-    "Server-sent events. Each message is a `data:` line with a JSON event: `delta` events carry the next text, and a final `done` event carries the model, token usage and latency. If the provider fails mid-stream, an `event: error` message is sent.",
+// Documents the events in OpenAPI; at runtime the route sends a Readable stream of them.
+export const StreamResponse = StreamEventSchema.meta({
+  description: "Server-sent events. Each message is a `data:` line holding one JSON event.",
   examples: [streamExample],
 }) as unknown as z.ZodType<Readable>;

@@ -35,6 +35,8 @@ const chatRoutes: FastifyPluginAsyncZod = async (app) => {
       schema: {
         tags: ["Chat"],
         summary: "Send a message and stream the reply (server-sent events)",
+        description:
+          "Streams the reply as it is written. `delta` events carry the next piece of text, and a final `done` event carries the model, token usage and latency. If the provider fails mid-stream, an `event: error` message is sent instead.",
         body: ChatBody,
         produces: ["text/event-stream"],
         response: { 200: StreamResponse },
