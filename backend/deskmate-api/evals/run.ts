@@ -3,6 +3,7 @@ import { mkdir, readdir } from "node:fs/promises";
 import { env } from "~/config/env";
 import { logger } from "~/lib/logger";
 import { chatService } from "~/modules/chat/chat.service";
+import { intentService } from "~/modules/intent/intent.service";
 import { systemPrompt } from "~/prompts";
 
 import { runCheck } from "./checks";
@@ -38,14 +39,31 @@ async function loadCases() {
   return lists.flat();
 }
 
-async function runCase(name: string, testCase: EvalCase): Promise<CaseResult> {
-  try {
+async function getReply(testCase: EvalCase) {
+  if (!testCase.expected) {
     const { reply, usage, latencyMs } = await chatService.reply({
       message: testCase.input,
       history: testCase.history,
     });
+    return { reply, tokens: usage.totalTokens, latencyMs, checks: testCase.checks };
+  }
 
-    const outcomes = await Promise.all(testCase.checks.map((c) => runCheck(c, testCase, reply)));
+  const startedAt = performance.now();
+  const { intent, tokens } = await intentService.classify(testCase.input);
+  const latencyMs = Math.round(performance.now() - startedAt);
+  return {
+    reply: intent,
+    tokens,
+    latencyMs,
+    checks: [{ type: "equals" as const, value: testCase.expected }],
+  };
+}
+
+async function runCase(name: string, testCase: EvalCase): Promise<CaseResult> {
+  try {
+    const { reply, tokens: replyTokens, latencyMs, checks: toRun } = await getReply(testCase);
+
+    const outcomes = await Promise.all(toRun.map((c) => runCheck(c, testCase, reply)));
     const checks = outcomes.map(({ check, passed, detail, score, reason }) => ({
       check,
       passed,
@@ -53,7 +71,7 @@ async function runCase(name: string, testCase: EvalCase): Promise<CaseResult> {
       score,
       reason,
     }));
-    const tokens = outcomes.reduce((sum, o) => sum + o.tokens, usage.totalTokens);
+    const tokens = outcomes.reduce((sum, o) => sum + o.tokens, replyTokens);
     return {
       name,
       input: testCase.input,
@@ -65,7 +83,7 @@ async function runCase(name: string, testCase: EvalCase): Promise<CaseResult> {
     };
   } catch (err) {
     const detail = `error: ${err instanceof Error ? err.message : String(err)}`;
-    const failed = { check: testCase.checks[0]!, passed: false, detail };
+    const failed = { check: { type: "equals" as const, value: "" }, passed: false, detail };
     const input = testCase.input;
     return { name, input, reply: "", passed: false, checks: [failed], tokens: 0, latencyMs: 0 };
   }

@@ -26,6 +26,13 @@ export async function runCheck(
         detail: `should not contain "${check.value}"`,
         tokens: 0,
       };
+    case "equals":
+      return {
+        check,
+        passed: reply.trim() === check.value,
+        detail: `should equal "${check.value}"`,
+        tokens: 0,
+      };
     case "regex":
       return {
         check,
