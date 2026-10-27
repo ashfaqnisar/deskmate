@@ -3,6 +3,8 @@ import {
   isResponseSerializationError,
 } from "fastify-type-provider-zod";
 
+import { logger } from "~/lib/logger";
+
 import type { FastifyError, FastifyReply, FastifyRequest } from "fastify";
 
 export class HttpError extends Error {
@@ -14,7 +16,7 @@ export class HttpError extends Error {
   }
 }
 
-export function errorHandler(err: unknown, req: FastifyRequest, reply: FastifyReply) {
+export function errorHandler(err: unknown, _req: FastifyRequest, reply: FastifyReply) {
   if (hasZodFastifySchemaValidationErrors(err)) {
     return reply.code(400).send({
       error: "Bad Request",
@@ -23,7 +25,7 @@ export function errorHandler(err: unknown, req: FastifyRequest, reply: FastifyRe
     });
   }
   if (isResponseSerializationError(err)) {
-    req.log.error({ err }, "Response doesn't match the schema");
+    logger.error({ err }, "Response doesn't match the schema");
     return reply.code(500).send({ error: "Internal Server Error" });
   }
   if (err instanceof HttpError) {
@@ -31,7 +33,7 @@ export function errorHandler(err: unknown, req: FastifyRequest, reply: FastifyRe
   }
   const { statusCode = 500, message } = err as FastifyError;
   if (statusCode >= 500) {
-    req.log.error({ err }, "Unhandled error");
+    logger.error({ err }, "Unhandled error");
     return reply.code(500).send({ error: "Internal Server Error" });
   }
   return reply.code(statusCode).send({ error: message });
