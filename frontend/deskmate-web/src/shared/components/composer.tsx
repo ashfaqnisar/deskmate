@@ -1,6 +1,9 @@
 import { useState } from "react";
 
-import { Button } from "~/components/button";
+import { ArrowUp, Square } from "lucide-react";
+
+import { Button } from "~/shared/shadcn/button";
+import { Textarea } from "~/shared/shadcn/textarea";
 
 import type { FormEvent, KeyboardEvent } from "react";
 
@@ -23,8 +26,8 @@ export function Composer({ isStreaming, onSend, onStop }: Props) {
 
   return (
     <form className="flex items-end gap-2 pt-3 pb-5" onSubmit={submit}>
-      <textarea
-        className="field-sizing-content max-h-40 flex-1 resize-none rounded-xl border border-stone-200 bg-white px-3.5 py-2.5 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 dark:border-stone-800 dark:bg-stone-900"
+      <Textarea
+        className="max-h-40 min-h-9 flex-1 px-3 py-2 text-sm md:text-sm"
         value={text}
         onChange={(event) => setText(event.target.value)}
         onKeyDown={onKeyDown}
@@ -33,12 +36,18 @@ export function Composer({ isStreaming, onSend, onStop }: Props) {
         maxLength={4000}
       />
       {isStreaming ? (
-        <Button type="button" variant="danger" onClick={onStop}>
-          Stop
+        <Button
+          type="button"
+          variant="destructive"
+          size="icon-lg"
+          aria-label="Stop"
+          onClick={onStop}
+        >
+          <Square className="fill-current" />
         </Button>
       ) : (
-        <Button type="submit" disabled={!text.trim()}>
-          Send
+        <Button type="submit" size="icon-lg" aria-label="Send" disabled={!text.trim()}>
+          <ArrowUp />
         </Button>
       )}
     </form>

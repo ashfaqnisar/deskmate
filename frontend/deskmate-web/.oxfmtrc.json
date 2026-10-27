@@ -1,7 +1,7 @@
 {
   "$schema": "../../node_modules/oxfmt/configuration_schema.json",
   "extends": ["../../.oxfmtrc.json"],
-  "ignorePatterns": ["**/dist/**", "**/node_modules/**"],
+  "ignorePatterns": ["**/dist/**", "**/node_modules/**", "src/typeset.css"],
   "sortImports": {
     "internalPattern": ["~/"],
     "customGroups": [
@@ -31,8 +31,13 @@
         "modifiers": ["value"]
       },
       {
-        "groupName": "tilde-components",
-        "elementNamePattern": ["~/components", "~/components/**"],
+        "groupName": "tilde-shared-shadcn",
+        "elementNamePattern": ["~/shared/shadcn", "~/shared/shadcn/**"],
+        "modifiers": ["value"]
+      },
+      {
+        "groupName": "tilde-shared-components",
+        "elementNamePattern": ["~/shared/components", "~/shared/components/**"],
         "modifiers": ["value"]
       }
     ],
@@ -43,7 +48,7 @@
       "value-external",
       "deskmate",
       ["tilde-lib", "tilde-hooks"],
-      "tilde-components",
+      ["tilde-shared-shadcn", "tilde-shared-components"],
       "value-internal",
       ["value-parent", "value-sibling", "value-index"],
       [
@@ -61,7 +66,7 @@
   },
   "sortTailwindcss": {
     "stylesheet": "./src/styles.css",
-    "functions": ["clsx"],
+    "functions": ["cn", "cva"],
     "preserveWhitespace": true
   }
 }

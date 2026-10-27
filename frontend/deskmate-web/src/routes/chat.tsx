@@ -1,12 +1,13 @@
 import { createRoute } from "@tanstack/react-router";
-import clsx from "clsx";
+import { Plus } from "lucide-react";
 
 import { useApiHealth } from "~/hooks/use-api-health";
 import { useChat } from "~/hooks/use-chat";
+import { cn } from "~/lib/utils";
 
-import { Button } from "~/components/button";
-import { ChatMessage } from "~/components/chat-message";
-import { Composer } from "~/components/composer";
+import { ChatMessage } from "~/shared/components/chat-message";
+import { Composer } from "~/shared/components/composer";
+import { Button } from "~/shared/shadcn/button";
 
 import { rootRoute } from "~/routes/root";
 
@@ -16,29 +17,32 @@ function ChatPage() {
 
   return (
     <>
-      <header className="flex items-center justify-between border-b border-stone-200 py-4 dark:border-stone-800">
+      <header className="flex items-center justify-between border-b py-4">
         <div className="flex items-center gap-2.5">
-          <h1 className="text-[17px] font-semibold tracking-tight">Deskmate</h1>
+          <h1 className="font-heading text-base font-semibold tracking-tight">Deskmate</h1>
           <span
             title={
               health.isError ? "API offline" : health.isSuccess ? "API online" : "Checking API…"
             }
-            className={clsx(
+            className={cn(
               "size-2 rounded-full",
               health.isSuccess && "bg-emerald-500",
-              health.isError && "bg-red-500",
-              health.isPending && "bg-stone-400",
+              health.isError && "bg-destructive",
+              health.isPending && "bg-muted-foreground/40",
             )}
           />
         </div>
-        <Button variant="ghost" onClick={reset} disabled={!messages.length}>
+        <Button variant="outline" size="sm" onClick={reset} disabled={!messages.length}>
+          <Plus />
           New chat
         </Button>
       </header>
 
       <main className="flex flex-1 flex-col gap-5 overflow-y-auto py-6">
         {messages.length === 0 ? (
-          <p className="m-auto text-stone-500">Ask me anything about Acme HR or IT.</p>
+          <p className="m-auto text-sm text-muted-foreground">
+            Ask me anything about Acme HR or IT.
+          </p>
         ) : (
           messages.map((message, index) => (
             <ChatMessage
