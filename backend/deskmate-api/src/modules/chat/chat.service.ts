@@ -67,7 +67,7 @@ export const chatService = {
     const startedAt = performance.now();
     const { refuse, tokens } = await checkIntent(body.message, signal);
     if (refuse) {
-      logger.warn({ intent: "off_topic" }, "Refusing off-topic request")
+      logger.warn({ intent: "off_topic" }, "Refusing off-topic request");
       const { reply, ...done } = refusalResult(startedAt, tokens);
       yield { type: "delta", text: reply };
       yield { type: "done", ...done };
