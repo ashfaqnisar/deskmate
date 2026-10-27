@@ -1,9 +1,11 @@
 import { Readable } from "node:stream";
 
+import { ChatBody, ChatResponse } from "@deskmate/shared";
+
 import { HttpError } from "~/lib/errors";
 import { logger } from "~/lib/logger";
 
-import { ChatBody, ChatResponse, StreamResponse } from "./chat.schema";
+import { StreamResponse } from "./chat.schema";
 import { chatService } from "./chat.service";
 
 import type { FastifyPluginAsyncZod } from "fastify-type-provider-zod";

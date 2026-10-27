@@ -10,8 +10,25 @@ An internal HR/IT helpdesk AI agent for the fictional **Acme Corp**, built by ha
 
 **Stack:** TypeScript · Bun · DeepSeek API · Postgres + pgvector · Ollama embeddings · MCP TS SDK
 
-## Layout (so far)
+## Layout
 
-- `docs/`: learning plan and notes
+Bun workspaces monorepo.
+
+- `apps/api/`: Fastify API (chat, docs, database, migrations)
+- `apps/web/`: React UI (not created yet)
+- `packages/shared/`: zod schemas and types shared by the API and the UI
 - `data/company/`: fake company knowledge base for RAG
 - `data/evals/`: eval datasets (you write these)
+- `docs/`: learning plan and notes
+
+## Getting started
+
+```sh
+bun install
+docker compose up -d                 # Postgres + pgvector
+cp apps/api/.env.example apps/api/.env   # then fill in LLM_API_KEY
+bun run db:migrate
+bun run dev                          # API on http://localhost:3000, docs at /docs
+```
+
+Other scripts: `bun run typecheck`, `bun run lint`, `bun run lint:fix`, `bun run db:generate`.

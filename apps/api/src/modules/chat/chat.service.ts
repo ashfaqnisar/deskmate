@@ -4,7 +4,7 @@ import { HttpError } from "~/lib/errors";
 import { logger } from "~/lib/logger";
 import * as llm from "~/llm/provider";
 
-import type { ChatBody } from "./chat.schema";
+import type { ChatBody } from "@deskmate/shared";
 
 const toMessages = (body: ChatBody): llm.ChatMessage[] => [
   ...body.history,

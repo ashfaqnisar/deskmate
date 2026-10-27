@@ -1,6 +1,12 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "ignorePatterns": ["**/dist/**", "**/node_modules/**", "data", "docs", "src/db/migrations"],
+  "ignorePatterns": [
+    "**/dist/**",
+    "**/node_modules/**",
+    "data",
+    "docs",
+    "apps/api/src/db/migrations"
+  ],
   "printWidth": 100,
   "sortImports": {
     "internalPattern": ["~/"],
@@ -9,12 +15,18 @@
         "groupName": "bun",
         "elementNamePattern": ["bun", "bun:*"],
         "modifiers": ["value"]
+      },
+      {
+        "groupName": "deskmate",
+        "elementNamePattern": ["@deskmate/**"],
+        "modifiers": ["value"]
       }
     ],
     "groups": [
       "value-builtin",
       "bun",
       "value-external",
+      "deskmate",
       "value-internal",
       ["value-parent", "value-sibling", "value-index"],
       [

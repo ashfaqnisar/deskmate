@@ -8,7 +8,7 @@ const EnvSchema = z.object({
   DATABASE_URL: z.string().default("postgres://deskmate:deskmate@localhost:5432/deskmate"),
   CORS_ORIGIN: z
     .string()
-    .default("http://localhost:4200")
+    .default("http://localhost:5173")
     .transform((value) => value.split(",").map((origin) => origin.trim())),
   RATE_LIMIT_MAX: z.coerce.number().default(60),
   DOCS_ENABLED: z.stringbool().default(true),

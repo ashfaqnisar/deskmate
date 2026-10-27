@@ -3,13 +3,9 @@ import OpenAI from "openai";
 import { env } from "~/config/env";
 import { logger } from "~/lib/logger";
 
+import type { StreamEvent, Usage } from "@deskmate/shared";
+
 export type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
-
-export type Usage = { promptTokens: number; completionTokens: number; totalTokens: number };
-
-export type StreamEvent =
-  | { type: "delta"; text: string }
-  | { type: "done"; model: string; usage: Usage; latencyMs: number };
 
 const client = new OpenAI({
   baseURL: env.LLM_BASE_URL,
