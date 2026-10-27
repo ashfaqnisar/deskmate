@@ -5,6 +5,7 @@ const EnvSchema = z.object({
   LLM_BASE_URL: z.string().url(),
   LLM_API_KEY: z.string().min(1, "LLM_API_KEY is empty; add it to .env"),
   LLM_MODEL: z.string().min(1),
+  INTENT_MODEL: z.string().min(1).optional(),
   DATABASE_URL: z.string().default("postgres://deskmate:deskmate@localhost:5432/deskmate"),
   CORS_ORIGIN: z
     .string()

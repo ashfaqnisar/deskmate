@@ -25,12 +25,12 @@ const since = (startedAt: number) => Math.round(performance.now() - startedAt);
 export async function chat(
   messages: ChatMessage[],
   signal?: AbortSignal,
-  options: { temperature?: number; json?: boolean } = {},
+  options: { model?: string; temperature?: number; json?: boolean } = {},
 ) {
   const startedAt = performance.now();
   const completion = await client.chat.completions.create(
     {
-      model: env.LLM_MODEL,
+      model: options.model ?? env.LLM_MODEL,
       messages,
       temperature: options.temperature,
       response_format: options.json ? { type: "json_object" } : undefined,

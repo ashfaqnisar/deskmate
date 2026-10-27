@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { env } from "~/config/env";
 import { logger } from "~/lib/logger";
 import * as llm from "~/llm/provider";
 import { intentPrompt } from "~/prompts";
@@ -15,7 +16,11 @@ function parseIntent(reply: string) {
 }
 
 const classify = async (messages: llm.ChatMessage[], signal?: AbortSignal) => {
-  const { reply, usage } = await llm.chat(messages, signal, { temperature: 0, json: true });
+  const { reply, usage } = await llm.chat(messages, signal, {
+    model: env.INTENT_MODEL,
+    temperature: 0,
+    json: true,
+  });
   return { reply, tokens: usage.totalTokens, result: parseIntent(reply) };
 };
 
