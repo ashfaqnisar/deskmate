@@ -1,4 +1,4 @@
-const PROMPT_VERSION = "v1";
+const PROMPT_VERSION = "v2";
 
 const template = await Bun.file(new URL(`./system.${PROMPT_VERSION}.md`, import.meta.url)).text();
 
