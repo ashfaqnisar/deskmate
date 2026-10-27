@@ -22,10 +22,14 @@ const toUsage = (usage?: OpenAI.CompletionUsage | null): Usage => ({
 
 const since = (startedAt: number) => Math.round(performance.now() - startedAt);
 
-export async function chat(messages: ChatMessage[], signal?: AbortSignal) {
+export async function chat(
+  messages: ChatMessage[],
+  signal?: AbortSignal,
+  options: { temperature?: number } = {},
+) {
   const startedAt = performance.now();
   const completion = await client.chat.completions.create(
-    { model: env.LLM_MODEL, messages },
+    { model: env.LLM_MODEL, messages, temperature: options.temperature },
     { signal },
   );
 
