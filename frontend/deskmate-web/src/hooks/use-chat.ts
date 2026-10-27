@@ -47,17 +47,25 @@ export function useChat() {
     },
   });
 
-  const send = (text: string) => {
-    const history = messages
+  const start = (text: string, previous: Message[]) => {
+    const history = previous
       .filter((message) => message.content && !message.error)
       .slice(-MAX_HISTORY)
       .map(({ role, content }) => ({ role, content }));
 
     const reply: Message = { id: crypto.randomUUID(), role: "assistant", content: "" };
-    setMessages((all) => [...all, { id: crypto.randomUUID(), role: "user", content: text }, reply]);
+    const question: Message = { id: crypto.randomUUID(), role: "user", content: text };
+    setMessages([...previous, question, reply]);
 
     controller.current = new AbortController();
     mutation.mutate({ text, history, replyId: reply.id, signal: controller.current.signal });
+  };
+
+  const send = (text: string) => start(text, messages);
+
+  const regenerate = () => {
+    const index = messages.findLastIndex((message) => message.role === "user");
+    if (index !== -1) start(messages[index]!.content, messages.slice(0, index));
   };
 
   const stop = () => controller.current?.abort();
@@ -68,5 +76,5 @@ export function useChat() {
     setMessages([]);
   };
 
-  return { messages, isStreaming: mutation.isPending, send, stop, reset };
+  return { messages, isStreaming: mutation.isPending, send, regenerate, stop, reset };
 }

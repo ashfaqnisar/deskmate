@@ -1,61 +1,52 @@
 import { createRoute } from "@tanstack/react-router";
-import { Plus } from "lucide-react";
 
 import { useApiHealth } from "~/hooks/use-api-health";
 import { useChat } from "~/hooks/use-chat";
-import { cn } from "~/lib/utils";
 
+import { ChatHeader } from "~/shared/components/chat-header";
 import { ChatMessage } from "~/shared/components/chat-message";
 import { Composer } from "~/shared/components/composer";
-import { Button } from "~/shared/shadcn/button";
+import { EmptyState } from "~/shared/components/empty-state";
 
 import { rootRoute } from "~/routes/root";
 
 function ChatPage() {
-  const { messages, isStreaming, send, stop, reset } = useChat();
+  const { messages, isStreaming, send, regenerate, stop, reset } = useChat();
   const health = useApiHealth();
+  const status = health.isError ? "offline" : health.isSuccess ? "online" : "checking";
 
   return (
     <>
-      <header className="flex items-center justify-between border-b py-4">
-        <div className="flex items-center gap-2.5">
-          <h1 className="font-heading text-base font-semibold tracking-tight">Deskmate</h1>
-          <span
-            title={
-              health.isError ? "API offline" : health.isSuccess ? "API online" : "Checking API…"
-            }
-            className={cn(
-              "size-2 rounded-full",
-              health.isSuccess && "bg-emerald-500",
-              health.isError && "bg-destructive",
-              health.isPending && "bg-muted-foreground/40",
-            )}
-          />
-        </div>
-        <Button variant="outline" size="sm" onClick={reset} disabled={!messages.length}>
-          <Plus />
-          New chat
-        </Button>
-      </header>
+      <ChatHeader status={status} canReset={messages.length > 0} onReset={reset} />
 
-      <main className="flex flex-1 flex-col gap-5 overflow-y-auto py-6">
+      <main className="flex flex-1 flex-col gap-6 overflow-y-auto py-6">
         {messages.length === 0 ? (
-          <p className="m-auto text-sm text-muted-foreground">
-            Ask me anything about Acme HR or IT.
-          </p>
+          <EmptyState onPick={send} />
         ) : (
-          messages.map((message, index) => (
-            <ChatMessage
-              key={message.id}
-              message={message}
-              isStreaming={isStreaming && index === messages.length - 1}
-            />
-          ))
+          <>
+            {messages.map((message, index) => {
+              const isLast = index === messages.length - 1;
+              return (
+                <ChatMessage
+                  key={message.id}
+                  message={message}
+                  isStreaming={isStreaming && isLast}
+                  canRegenerate={isLast && !isStreaming}
+                  onRegenerate={regenerate}
+                />
+              );
+            })}
+            <div ref={(node) => node?.scrollIntoView({ block: "end" })} />
+          </>
         )}
-        <div ref={(node) => node?.scrollIntoView({ block: "end" })} />
       </main>
 
-      <Composer isStreaming={isStreaming} onSend={send} onStop={stop} />
+      <div className="pt-2 pb-4">
+        <Composer isStreaming={isStreaming} onSend={send} onStop={stop} />
+        <p className="mt-3 text-center text-xs text-muted-foreground">
+          Deskmate can make mistakes. For anything important, confirm with HR or IT.
+        </p>
+      </div>
     </>
   );
 }
