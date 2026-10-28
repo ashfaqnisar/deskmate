@@ -2,9 +2,13 @@ import { expect, test } from "bun:test";
 
 import { systemPrompt } from "./index";
 
-test("renders the date into the system prompt", () => {
-  const prompt = systemPrompt.render({ today: "2026-10-27" });
+test("renders the date and the retrieved documents into the system prompt", () => {
+  const prompt = systemPrompt.render({
+    today: "2026-10-27",
+    context: "<document>18 days</document>",
+  });
   expect(prompt).toContain("Today's date is 2026-10-27.");
+  expect(prompt).toContain("<document>18 days</document>");
   expect(prompt).not.toContain("{{");
 });
 

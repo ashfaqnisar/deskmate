@@ -5,6 +5,10 @@ import { logger } from "~/lib/logger";
 
 import type { StreamEvent, Usage } from "@deskmate/shared";
 
+// The provider does not know about sources; the chat service adds them to the final event.
+type DoneEvent = Extract<StreamEvent, { type: "done" }>;
+export type StreamPart = Extract<StreamEvent, { type: "delta" }> | Omit<DoneEvent, "sources">;
+
 export type ChatMessage = { role: "system" | "user" | "assistant"; content: string };
 
 const client = new OpenAI({
@@ -48,7 +52,7 @@ export async function chat(
 export async function* stream(
   messages: ChatMessage[],
   signal?: AbortSignal,
-): AsyncGenerator<StreamEvent> {
+): AsyncGenerator<StreamPart> {
   const startedAt = performance.now();
   const completion = await client.chat.completions.create(
     { model: env.LLM_MODEL, messages, stream: true, stream_options: { include_usage: true } },
