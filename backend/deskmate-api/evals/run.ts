@@ -1,5 +1,3 @@
-import { mkdir, readdir } from "node:fs/promises";
-
 import { env } from "~/config/env";
 import { logger } from "~/lib/logger";
 import { chatService } from "~/modules/chat/chat.service";
@@ -20,8 +18,13 @@ const only = process.argv.slice(2).find((arg) => !arg.startsWith("--"));
 
 const percent = (value: number) => `${(value * 100).toFixed(1)}%`;
 
+const listFiles = async (pattern: string, dir: URL) =>
+  (await Array.fromAsync(new Bun.Glob(pattern).scan(Bun.fileURLToPath(dir)))).toSorted((a, b) =>
+    a.localeCompare(b),
+  );
+
 async function loadCases() {
-  const files = (await readdir(DATA_DIR)).filter((file) => file.endsWith(".jsonl")).toSorted();
+  const files = await listFiles("*.jsonl", DATA_DIR);
   const selected = files.filter((file) => !only || file === `${only}.jsonl`);
   if (selected.length === 0) throw new Error(`No dataset found for "${only}"`);
 
@@ -111,9 +114,11 @@ async function runAll(cases: { name: string; testCase: EvalCase }[]) {
   return results.toSorted((a, b) => a.name.localeCompare(b.name));
 }
 
-async function loadPreviousRun() {
-  const files = await readdir(RESULTS_DIR).catch(() => []);
-  const latest = files.toSorted((a, b) => a.localeCompare(b)).at(-1);
+// Result files are named <timestamp>__<datasets>.json, so a comparison only looks at runs of the
+// same datasets (a 5-case run is not comparable with a 25-case one).
+async function loadPreviousRun(datasetKey: string) {
+  const files = await listFiles(`*__${datasetKey}.json`, RESULTS_DIR).catch(() => []);
+  const latest = files.at(-1);
   return latest ? ((await Bun.file(new URL(latest, RESULTS_DIR)).json()) as RunResult) : undefined;
 }
 
@@ -135,7 +140,8 @@ function logComparison(run: RunResult, previous?: RunResult) {
 
 async function run() {
   const cases = await loadCases();
-  const previous = compare ? await loadPreviousRun() : undefined;
+  const datasetKey = [...new Set(cases.map((c) => c.name.split("/")[0]!))].join("+");
+  const previous = compare ? await loadPreviousRun(datasetKey) : undefined;
 
   logger.info({ cases: cases.length }, "Eval started");
   const results = await runAll(cases);
@@ -166,8 +172,7 @@ async function run() {
   );
   if (compare) logComparison(result, previous);
 
-  await mkdir(RESULTS_DIR, { recursive: true });
-  const file = `${result.startedAt.replaceAll(":", "-")}.json`;
+  const file = `${result.startedAt.replaceAll(":", "-")}__${datasetKey}.json`;
   await Bun.write(new URL(file, RESULTS_DIR), JSON.stringify(result, null, 2));
   logger.info({ file: `evals/results/${file}` }, "Eval results saved");
 

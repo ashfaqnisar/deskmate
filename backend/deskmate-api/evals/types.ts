@@ -7,6 +7,7 @@ const CheckSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("notContains"), value: z.string() }),
   z.object({ type: z.literal("equals"), value: z.string() }),
   z.object({ type: z.literal("regex"), pattern: z.string() }),
+  z.object({ type: z.literal("retrieves"), source: z.string(), k: z.number().default(4) }),
   z.object({ type: z.literal("judge"), rubric: z.string(), minScore: z.number().default(4) }),
 ]);
 

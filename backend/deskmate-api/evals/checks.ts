@@ -1,3 +1,5 @@
+import { retrieve } from "~/rag/retrieval/retrieve";
+
 import { judge } from "./judge";
 
 import type { Check, CheckResult, EvalCase } from "./types";
@@ -40,6 +42,15 @@ export async function runCheck(
         detail: `should match /${check.pattern}/`,
         tokens: 0,
       };
+    case "retrieves": {
+      const found = await retrieve(testCase.input, { accessLevels: ["employee"], k: check.k });
+      return {
+        check,
+        passed: found.some((chunk) => chunk.source === check.source),
+        detail: `top ${check.k} chunks should include ${check.source}`,
+        tokens: 0,
+      };
+    }
     case "judge": {
       const { score, reason, tokens } = await judge(testCase.input, reply, check.rubric);
       return {
