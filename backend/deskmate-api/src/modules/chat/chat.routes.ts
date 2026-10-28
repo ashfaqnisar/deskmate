@@ -23,6 +23,8 @@ const chatRoutes: FastifyPluginAsyncZod = async (app) => {
       schema: {
         tags: ["Chat"],
         summary: "Send a message and get the full reply",
+        description:
+          "Sends a message, plus up to 20 earlier messages for context, and returns the whole reply at once. A confident off-topic request gets a fixed refusal without calling the model. Otherwise the most relevant company documents are retrieved and the model answers only from them, citing files like `[leave-policy.md]`. `sources` lists the documents used. Use the streaming endpoint to show the reply as it is written.",
         body: ChatBody,
         response: { 200: ChatResponse },
       },
@@ -38,7 +40,7 @@ const chatRoutes: FastifyPluginAsyncZod = async (app) => {
         tags: ["Chat"],
         summary: "Send a message and stream the reply (server-sent events)",
         description:
-          "Streams the reply as it is written. `delta` events carry the next piece of text, and a final `done` event carries the model, token usage and latency. If the provider fails mid-stream, an `event: error` message is sent instead.",
+          "Same behavior as the non-streaming endpoint, but the reply arrives as it is written. `delta` events carry the next piece of text, and a final `done` event carries the model, token usage, latency and the `sources` the answer was based on. If the provider fails mid-stream, an `event: error` message is sent instead.",
         body: ChatBody,
         produces: ["text/event-stream"],
         response: { 200: StreamResponse },

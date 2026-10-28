@@ -6,7 +6,7 @@ import type { z } from "zod";
 const streamExample =
   'data: {"type":"delta","text":"Hello"}\n\n' +
   'data: {"type":"delta","text":" there!"}\n\n' +
-  'data: {"type":"done","model":"deepseek-chat","usage":{"promptTokens":12,"completionTokens":4,"totalTokens":16},"latencyMs":812}\n\n';
+  'data: {"type":"done","model":"deepseek-chat","usage":{"promptTokens":12,"completionTokens":4,"totalTokens":16},"latencyMs":812,"sources":[{"source":"leave-policy.md","title":"Leave Policy","section":"Sick Leave"}]}\n\n';
 
 // Documents the events in OpenAPI; at runtime the route sends a Readable stream of them.
 export const StreamResponse = StreamEventSchema.meta({

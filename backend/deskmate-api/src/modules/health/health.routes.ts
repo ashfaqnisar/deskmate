@@ -9,6 +9,8 @@ const healthRoutes: FastifyPluginAsyncZod = async (app) => {
       schema: {
         tags: ["Health"],
         summary: "Liveness check",
+        description:
+          "Returns `ok` while the API process is running. It does not check the database or the AI provider. The web app polls it to show the API status badge.",
         response: { 200: HealthSchema },
       },
     },
