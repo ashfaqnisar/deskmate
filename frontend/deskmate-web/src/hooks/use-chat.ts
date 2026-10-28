@@ -4,12 +4,12 @@ import { useMutation } from "@tanstack/react-query";
 
 import { streamChat } from "~/lib/api";
 
-import type { ChatMessage } from "@deskmate/shared";
+import type { ChatMessage, Source } from "@deskmate/shared";
 
 export type Message = ChatMessage & {
   id: string;
   error?: string;
-  meta?: { model: string; totalTokens: number; latencyMs: number };
+  meta?: { model: string; totalTokens: number; latencyMs: number; sources: Source[] };
 };
 
 type SendVariables = {
@@ -34,10 +34,10 @@ export function useChat() {
         if (event.type === "delta") {
           update(replyId, (message) => ({ ...message, content: message.content + event.text }));
         } else {
-          const { model, usage, latencyMs } = event;
+          const { model, usage, latencyMs, sources } = event;
           update(replyId, (message) => ({
             ...message,
-            meta: { model, totalTokens: usage.totalTokens, latencyMs },
+            meta: { model, totalTokens: usage.totalTokens, latencyMs, sources },
           }));
         }
       }

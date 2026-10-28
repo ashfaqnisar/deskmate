@@ -2,9 +2,12 @@ import { useState } from "react";
 
 import { Check, Copy, RefreshCw, Sparkles } from "lucide-react";
 
+import { citedSources, linkCitations } from "~/lib/citations";
 import { cn } from "~/lib/utils";
 
+import { DocumentDialog } from "~/shared/components/document-dialog";
 import { Markdown } from "~/shared/components/markdown";
+import { SourceChips } from "~/shared/components/source-chips";
 import { Avatar, AvatarFallback } from "~/shared/shadcn/avatar";
 import { Button } from "~/shared/shadcn/button";
 import { Skeleton } from "~/shared/shadcn/skeleton";
@@ -44,6 +47,7 @@ function ActionButton({
 export function ChatMessage({ message, isStreaming, canRegenerate, onRegenerate }: Props) {
   const { role, content, error, meta } = message;
   const [copied, setCopied] = useState(false);
+  const [openSource, setOpenSource] = useState<string | null>(null);
 
   if (role === "user") {
     return (
@@ -54,6 +58,14 @@ export function ChatMessage({ message, isStreaming, canRegenerate, onRegenerate 
       </article>
     );
   }
+
+  // Citations are only checked against the reply's sources once the reply is complete.
+  const known = isStreaming ? undefined : meta?.sources;
+  const cited = known ? citedSources(content, known) : [];
+  const chips = cited.length > 0 ? cited : (known ?? []);
+  const titles = Object.fromEntries(
+    (meta?.sources ?? []).map(({ source, title }) => [source, title]),
+  );
 
   const copy = async () => {
     try {
@@ -73,7 +85,15 @@ export function ChatMessage({ message, isStreaming, canRegenerate, onRegenerate 
         </AvatarFallback>
       </Avatar>
       <div className="flex min-w-0 flex-1 flex-col">
-        {content && <Markdown isStreaming={isStreaming}>{content}</Markdown>}
+        {content && (
+          <Markdown isStreaming={isStreaming} citations={{ titles, onOpen: setOpenSource }}>
+            {linkCitations(content, known, isStreaming)}
+          </Markdown>
+        )}
+        {chips.length > 0 && (
+          <SourceChips sources={chips} numbered={cited.length > 0} onOpen={setOpenSource} />
+        )}
+        <DocumentDialog source={openSource} onClose={() => setOpenSource(null)} />
         {isStreaming && !content && !error && (
           <output className="block space-y-2 pt-1.5" aria-label="Thinking">
             <Skeleton className="h-3.5 w-3/4" />

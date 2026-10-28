@@ -1,5 +1,12 @@
+import { createContext, useContext } from "react";
+
 import { Streamdown } from "streamdown";
 
+import { CITE_PREFIX } from "~/lib/citations";
+
+import { Badge } from "~/shared/shadcn/badge";
+
+import type { ComponentProps } from "react";
 import type { Components } from "streamdown";
 
 // Streamdown's default text elements carry Tailwind classes that would override typeset.
@@ -19,14 +26,54 @@ const plainElements: Components = {
   strong: ({ node: _node, ...props }) => <strong {...props} />,
 };
 
-type Props = { children: string; isStreaming: boolean };
+type Citations = { titles: Record<string, string>; onOpen: (source: string) => void };
 
-export function Markdown({ children, isStreaming }: Props) {
-  return (
-    <div className="typeset typeset-docs max-w-[42em]">
-      <Streamdown className="space-y-0" components={plainElements} isAnimating={isStreaming}>
+const CitationsContext = createContext<Citations | undefined>(undefined);
+
+// A link to "#cite-<file>" is a citation: draw it as a small badge that opens the document.
+function Link({ node: _node, href, children, ...props }: ComponentProps<"a"> & { node?: unknown }) {
+  const citations = useContext(CitationsContext);
+
+  if (!href?.startsWith(CITE_PREFIX)) {
+    return (
+      <a href={href} target="_blank" rel="noreferrer noopener" {...props}>
         {children}
-      </Streamdown>
-    </div>
+      </a>
+    );
+  }
+
+  const source = href.slice(CITE_PREFIX.length);
+  const title = citations?.titles[source] ?? source;
+  return (
+    <Badge
+      variant="secondary"
+      className="mx-0.5 h-4 min-w-4 px-1 align-text-top text-[0.625rem] hover:bg-primary/20 hover:text-primary"
+      render={
+        <button
+          type="button"
+          title={title}
+          aria-label={`Open ${title}`}
+          onClick={() => citations?.onOpen(source)}
+        />
+      }
+    >
+      {children}
+    </Badge>
+  );
+}
+
+const components: Components = { ...plainElements, a: Link };
+
+type Props = { children: string; isStreaming: boolean; citations?: Citations };
+
+export function Markdown({ children, isStreaming, citations }: Props) {
+  return (
+    <CitationsContext value={citations}>
+      <div className="typeset typeset-docs max-w-[42em]">
+        <Streamdown className="space-y-0" components={components} isAnimating={isStreaming}>
+          {children}
+        </Streamdown>
+      </div>
+    </CitationsContext>
   );
 }

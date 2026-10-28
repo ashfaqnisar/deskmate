@@ -1,4 +1,4 @@
-import { StreamEventSchema } from "@deskmate/shared";
+import { DocumentResponse, StreamEventSchema } from "@deskmate/shared";
 
 import type { ChatBody, StreamEvent } from "@deskmate/shared";
 
@@ -54,4 +54,10 @@ export async function fetchHealth(signal?: AbortSignal) {
   const res = await fetch("/api/v1/health", { signal });
   if (!res.ok) throw new Error(await readError(res));
   return true;
+}
+
+export async function fetchDocument(source: string, signal?: AbortSignal) {
+  const res = await fetch(`/api/v1/documents/${encodeURIComponent(source)}`, { signal });
+  if (!res.ok) throw new Error(await readError(res));
+  return DocumentResponse.parse(await res.json());
 }
