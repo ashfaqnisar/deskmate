@@ -7,9 +7,11 @@ const EnvSchema = z.object({
   LLM_MODEL: z.string().min(1),
   INTENT_MODEL: z.string().min(1).optional(),
   INTENT_BACKEND: z.enum(["llm", "decision"]).default("llm"),
-  INTENT_DECISION_URL: z.string().url().default("http://localhost:11434"),
+  INTENT_DECISION_URL: z.url().default("http://localhost:11434"),
   INTENT_DECISION_MODEL: z.string().min(1).optional(),
   INTENT_DECISION_API_KEY: z.string().min(1).optional(),
+  EMBED_BASE_URL: z.url().default("http://localhost:11434/v1"),
+  EMBED_MODEL: z.string().min(1).default("nomic-embed-text"),
   DATABASE_URL: z.string().default("postgres://deskmate:deskmate@localhost:5432/deskmate"),
   CORS_ORIGIN: z
     .string()

@@ -11,6 +11,7 @@
     "eval": "bun evals/run.ts",
     "db:generate": "bunx --bun drizzle-kit generate",
     "db:migrate": "bun src/db/migrate.ts",
+    "ingest": "bun src/rag/ingest/ingest.ts",
     "db:studio": "bunx --bun drizzle-kit studio",
     "lint": "oxlint --type-aware --type-check && oxfmt --check",
     "lint:fix": "oxlint --fix && oxfmt"
